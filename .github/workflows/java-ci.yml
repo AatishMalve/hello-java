@@ -1,0 +1,37 @@
+# WORKFLOW: Defines the complete automation
+name: Java CI Pipeline
+
+# EVENT: Determines when the workflow starts
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# JOB: Groups the work to perform
+jobs:
+  build-and-test:
+
+    # RUNNER: Machine that executes this job
+    runs-on: ubuntu-latest
+
+    # STEPS: Individual tasks executed by the job
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Build and test
+        run: mvn --batch-mode clean verify
+
+      - name: Upload JAR artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: java-application
+          path: target/*.jar
